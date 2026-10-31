@@ -1,4 +1,5 @@
-import { FormEvent, useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import type { FormEvent } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { supabase, supabaseConfigured } from './lib/supabase'
 import './index.css'
@@ -44,7 +45,9 @@ export default function ConnectedApp() {
   useEffect(()=>{
     if(!supabase) { setLoading(false); return }
     supabase.auth.getSession().then(({data})=>setSession(data.session))
-    const {data:{subscription}}=supabase.auth.onAuthStateChange((_event,next)=>setSession(next))
+    const client = supabase
+    if (!client) return
+    const {data:{subscription}}=client.auth.onAuthStateChange((_event,next)=>setSession(next))
     return ()=>subscription.unsubscribe()
   },[])
 
@@ -74,7 +77,7 @@ export default function ConnectedApp() {
         const {count,error:countError}=await supabase.from(name).select('*',{count:'exact',head:true})
         return [name,countError?null:(count??0)] as const
       }))
-      setCounts(Object.fromEntries(results.filter((x)=>x[1]!==null)))
+      setCounts(Object.fromEntries(results.map(([name,count])=>[name,count ?? 0])))
     }
     setLoading(false)
   },[section,session])
