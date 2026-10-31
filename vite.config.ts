@@ -3,5 +3,6 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/Infotech/',
+  // GitHub Pages serves the app from /Infotech/, while Vercel serves it from the domain root.
+  base: process.env.GITHUB_ACTIONS ? '/Infotech/' : '/',
 })
