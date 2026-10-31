@@ -29,6 +29,22 @@ const stats = [
   { label: 'مطالبات تحتاج مراجعة', value: '١٢', unit: 'مطالبة', change: 'تتطلب إجراء', icon: '!', note: 'راجعها لتحديث حالتها', color: 'amber' },
 ]
 
+
+type SectionKey = 'orders' | 'stores' | 'finance' | 'claims' | 'reports' | 'support'
+const sectionPages: Record<SectionKey, { title:string; description:string; metrics:[string,string,string][]; columns:string[]; rows:string[][] }> = {
+orders:{title:'إدارة الطلبات',description:'متابعة الطلبات وحالات التنفيذ عبر جميع المتاجر.',metrics:[['إجمالي الطلبات','٢٤٨','هذا الشهر'],['قيد التنفيذ','٤٣','تحتاج متابعة'],['مكتملة','١٨٦','تم تنفيذها'],['ملغاة','١٩','هذا الشهر']],columns:['رقم الطلب','المتجر','التاريخ','المبلغ','الحالة'],rows:[['#MT-2048','متجر الندى','اليوم','٢٤,٥٠٠ ر.ي','مكتمل'],['#MT-2047','متجر التقنية','اليوم','١٨,٢٠٠ ر.ي','قيد المراجعة'],['#MT-2046','متجر الأمل','أمس','٣٢,٠٠٠ ر.ي','مكتمل']]},
+stores:{title:'إدارة المتاجر',description:'عرض المتاجر المسجلة ومتابعة نشاطها.',metrics:[['كل المتاجر','٦٤','مسجلة بالمنصة'],['متاجر نشطة','٥٨','تعمل حالياً'],['بانتظار التفعيل','٤','تحتاج مراجعة'],['متوقفة','٢','غير نشطة']],columns:['اسم المتجر','المعرّف','تاريخ التسجيل','الطلبات','الحالة'],rows:[['متجر الندى','ST-001','١٢ أكتوبر','٨٦','نشط'],['متجر التقنية','ST-002','١٥ أكتوبر','٥٢','نشط'],['متجر الأمل','ST-003','٢٠ أكتوبر','٣١','بانتظار التفعيل']]},
+finance:{title:'الإدارة المالية',description:'نظرة على الإيرادات والمبالغ والتسويات المالية.',metrics:[['إجمالي الإيرادات','٨,٤٥٠,٠٠٠','ر.ي هذا الشهر'],['المبالغ المحصلة','٦,٢٨٠,٠٠٠','ر.ي'],['مبالغ معلّقة','١,٢٤٠,٠٠٠','ر.ي'],['صافي العمليات','٩٤٪','معدل التحصيل']],columns:['البيان','المرجع','التاريخ','المبلغ','الحالة'],rows:[['تحصيل طلب','FN-1024','اليوم','٢٤,٥٠٠ ر.ي','مكتمل'],['تسوية متجر','FN-1023','أمس','١٨,٢٠٠ ر.ي','قيد المراجعة'],['دفعة مستحقة','FN-1022','٢٩ أكتوبر','٣٢,٠٠٠ ر.ي','معلّق']]},
+claims:{title:'إدارة المطالبات',description:'مراجعة المطالبات ومتابعة القرارات والإجراءات.',metrics:[['إجمالي المطالبات','٣٦','هذا الشهر'],['تحتاج مراجعة','١٢','بانتظار الإجراء'],['تمت الموافقة','١٨','مكتملة'],['مرفوضة','٦','تم إغلاقها']],columns:['رقم المطالبة','مقدم الطلب','التاريخ','القيمة','الحالة'],rows:[['CL-031','متجر الندى','اليوم','١٢,٥٠٠ ر.ي','تحتاج مراجعة'],['CL-030','متجر التقنية','أمس','٨,٢٠٠ ر.ي','مقبولة'],['CL-029','متجر الأمل','٢٨ أكتوبر','٥,٠٠٠ ر.ي','مرفوضة']]},
+reports:{title:'التقارير والتحليلات',description:'ملخصات أداء المنصة ومؤشرات الأعمال.',metrics:[['تقارير جاهزة','١٢','متاحة للعرض'],['نمو المبيعات','+١٢.٨٪','مقارنة بالفترة السابقة'],['نمو الطلبات','+٨.٢٪','مقارنة بالفترة السابقة'],['أداء المتاجر','٩٢٪','معدل النشاط']],columns:['اسم التقرير','الفترة','تاريخ التحديث','النوع','الحالة'],rows:[['تقرير المبيعات','أكتوبر ٢٠٢٦','اليوم','مالي','جاهز'],['تقرير الطلبات','أكتوبر ٢٠٢٦','اليوم','تشغيلي','جاهز'],['أداء المتاجر','الربع الثالث','أمس','تحليلي','جاهز']]},
+support:{title:'مركز المساعدة',description:'متابعة طلبات الدعم والإجابة عن استفسارات المستخدمين.',metrics:[['طلبات الدعم','١٨','هذا الشهر'],['مفتوحة','٥','بانتظار الرد'],['قيد المعالجة','٧','يتم العمل عليها'],['مغلقة','٦','تم حلها']],columns:['رقم الطلب','الموضوع','تاريخ الإرسال','الأولوية','الحالة'],rows:[['HD-018','مشكلة في طلب','اليوم','عالية','مفتوح'],['HD-017','استفسار مالي','أمس','متوسطة','قيد المعالجة'],['HD-016','تحديث بيانات متجر','٢٨ أكتوبر','منخفضة','مغلق']]}
+}
+function SectionPage({page}:{page:typeof sectionPages[SectionKey]}) {
+return <div className="section-page"><section className="welcome-row"><div><div className="eyebrow"><span className="live-dot"/> إدارة المنصة</div><h1>{page.title}</h1><p>{page.description}</p></div><span className="status-pill success">بيانات تجريبية</span></section>
+<section className="stats-grid">{page.metrics.map(([label,value,note],i)=><article className="stat-card" key={label}><div className="stat-top"><span className={'stat-icon '+['green','lime','blue','amber'][i]}>{['↗','▤','◈','✓'][i]}</span><span className="stat-change">MONEY TAKE</span></div><p className="stat-label">{label}</p><div className="stat-value">{value}</div><div className="stat-note">{note}</div></article>)}</section>
+<section className="panel transactions-panel"><div className="panel-heading"><div><h2>{page.title}</h2><p>أحدث السجلات المسجلة في النظام</p></div></div><div className="table-wrap"><table><thead><tr>{page.columns.map(c=><th key={c}>{c}</th>)}</tr></thead><tbody>{page.rows.map((r,i)=><tr key={i}>{r.map((v,j)=><td key={j}>{j===r.length-1?<span className="status-pill success">{v}</span>:v}</td>)}</tr>)}</tbody></table></div></section></div>
+}
+
 function App() {
   const [active, setActive] = useState('overview')
   const [menuOpen, setMenuOpen] = useState(false)
@@ -98,6 +114,7 @@ function App() {
         </header>
 
         <div className="page-container">
+          {active === 'overview' ? (<>
           <section className="welcome-row">
             <div>
               <div className="eyebrow"><span className="live-dot" /> لوحة تحكم الإدارة</div>
@@ -179,6 +196,7 @@ function App() {
           </section>
 
           <footer className="footer"><span>© ٢٠٢٦ MONEY TAKE. جميع الحقوق محفوظة.</span><span>صُنع لإدارة أعمال أكثر ذكاءً <b>♥</b></span></footer>
+          </>) : <SectionPage page={sectionPages[active as SectionKey] ?? sectionPages.support} />}
         </div>
       </main>
     </div>
