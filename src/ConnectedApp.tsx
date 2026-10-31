@@ -67,14 +67,15 @@ export default function ConnectedApp() {
 
   const loadData=useCallback(async()=>{
     if(!supabase || !session) return
+    const client = supabase
     setLoading(true);setError('')
     const target=section==='overview'?'orders':tables[section].table
-    const {data,error:queryError}=await supabase.from(target).select('*').order('created_at',{ascending:false}).limit(50)
+    const {data,error:queryError}=await client.from(target).select('*').order('created_at',{ascending:false}).limit(50)
     if(queryError){setError(queryError.message);setRows([])} else setRows((data??[]) as Row[])
     if(section==='overview'){
       const names=['orders','stores','transactions','claims']
       const results=await Promise.all(names.map(async name=>{
-        const {count,error:countError}=await supabase.from(name).select('*',{count:'exact',head:true})
+        const {count,error:countError}=await client.from(name).select('*',{count:'exact',head:true})
         return [name,countError?null:(count??0)] as const
       }))
       setCounts(Object.fromEntries(results.map(([name,count])=>[name,count ?? 0])))
